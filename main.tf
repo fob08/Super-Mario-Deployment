@@ -40,7 +40,7 @@ resource "aws_instance" "supermario" {
   tags = {
     Name = "SuperMario"
   }
-  #iam_instance_profile = aws_iam_instance_profile.mario_profile.name
+  iam_instance_profile = aws_iam_instance_profile.mario_profile.name
 
 }
 
@@ -54,4 +54,52 @@ resource "aws_security_group" "SM_security" {
         cidr_blocks = ["0.0.0.0/0"]
     }
     
+}
+
+#This is used to create an iam policy with the access of an administrator.
+resource "aws_iam_policy" "mario_policy" {
+  name = "mario_admin_policy"
+  path = "/"
+  description = "This policy provides admin access role"
+  policy = jsonencode({
+  "Version" : "2012-10-17",
+  "Statement" : [
+    {
+      "Effect" : "Allow",
+      "Action" : "*",
+      "Resource" : "*"
+    }
+  ]
+})
+}
+
+# After the policy is created, a role is needed which the policy will be attached to.
+resource "aws_iam_role" "SuperMario" {
+  name = "SuperMario_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+  description = "This role allow for EC2 instance to call AWS services on behalf of a user"
+}
+
+# This resource block helps to attach the role and the created policy together.
+resource "aws_iam_role_policy_attachment" "mario" {
+  role = aws_iam_role.SuperMario.name
+  policy_arn = aws_iam_policy.mario_policy.arn
+}
+
+# Creating an instance profile for the EC2
+resource "aws_iam_instance_profile" "mario_profile" {
+  name = "SuperMario-profile"
+  role = aws_iam_role.SuperMario.name
 }
