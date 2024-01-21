@@ -9,6 +9,6 @@ The deployment utilize AWS resources like:
 - AWS CLI
 It also uses Terraform and Kubectl.
 
-The AWS instance was set up to meet the requirements needed to install the game.
-A git repository https://github.com/Aj7Ay/k8s-mario.git with the k8s code was cloned.
-The game was finally deployed using the CLI.
+* The AWS instance was set up to meet the requirements needed to install the game.
+* A git repository https://github.com/Aj7Ay/k8s-mario.git with the k8s code was cloned.
+* The game was finally deployed using the CLI.
