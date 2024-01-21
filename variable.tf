@@ -17,5 +17,5 @@ variable "server_port" {
 variable "client_port" {
     description = "the port the server will use for HTTP requests"
     type = number
-    default = 20
+    default = 22
 }
