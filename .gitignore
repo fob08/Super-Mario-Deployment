@@ -2,4 +2,4 @@
 *.tfstate
 *.tfstate.backup
 suermario.txt
-new-mario.pem
+*.pem
