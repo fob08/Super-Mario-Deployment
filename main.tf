@@ -28,14 +28,22 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"] # Canonical
+  owners = ["099720109477"]
 }
 
+data "aws_key_pair" "new-mario" {
+  key_name           = "new-mario"
+}
+
+output "name" {
+  value = data.aws_key_pair.new-mario.key_name
+}
 
 # This resource helps to create an instance named supermario with different parameters.
 resource "aws_instance" "supermario" {
   ami = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
+  key_name = data.aws_key_pair.new-mario.key_name
   security_groups = [aws_security_group.SM_security.name]
   tags = {
     Name = "SuperMario"
@@ -48,10 +56,18 @@ resource "aws_instance" "supermario" {
 resource "aws_security_group" "SM_security" {
     name = "supermario-instance"
     ingress {
-        from_port = var.server_port
-        to_port = var.server_port
+        from_port = var.client_port
+        to_port = var.client_port
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    egress {
+      protocol = "tcp"
+      cidr_blocks = [ "0.0.0.0/0" ]
+      from_port = 443
+      to_port = 443
+      
     }
     
 }
@@ -103,3 +119,4 @@ resource "aws_iam_instance_profile" "mario_profile" {
   name = "SuperMario-profile"
   role = aws_iam_role.SuperMario.name
 }
+
